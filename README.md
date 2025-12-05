@@ -2,6 +2,8 @@
 
 A simple email composer with a rich text editor and live HTML preview. Write emails in a modern editor, customize styling, and copy email-safe HTML ready for Gmail.
 
+Hosted at [pretty-emails.com](https://www.pretty-emails.com). Runs entirely in your browser—nothing is sent to a server.
+
 ## Features
 
 - **BlockNote Editor** — Rich text editing with markdown shortcuts
