@@ -286,6 +286,7 @@ body {
 
 .bn-container * {
 	transition: none !important;
+	color: var(--foreground) !important;
 }
 
 .bn-container {
@@ -303,7 +304,6 @@ body {
 	font-weight: 450;
 	font-family: var(--font-sans);
 	font-size: 1rem;
-	color: var(--foreground);
 }
 
 /* Links */

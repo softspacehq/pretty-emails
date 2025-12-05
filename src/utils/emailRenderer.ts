@@ -4,7 +4,7 @@ import { EmailStyles } from "../types";
  * Converts markdown content to email-safe HTML with inline styles.
  * Uses table-based layout for maximum email client compatibility.
  */
-export function renderEmailHtml(markdown: string, styles: EmailStyles, preRenderedHtml?: string): string {
+export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 	const {
 		fontFamily,
 		fontSize,
@@ -29,7 +29,7 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles, preRender
 		maxWidth,
 		headingWeight,
 		bodyWeight,
-	}, preRenderedHtml);
+	});
 
 	return `<!DOCTYPE html>
 <html>
@@ -80,16 +80,11 @@ interface ContentStyles {
 /**
  * Converts markdown to inline-styled HTML for email clients.
  */
-function markdownToEmailHtml(markdown: string, styles: ContentStyles, preRenderedHtml?: string): string {
+function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 	const { textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight } = styles;
 
 	// Base style applied to all text elements for Gmail compatibility
 	const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${bodyWeight};`;
-
-	// If we receive pre-rendered HTML (from BlockNote), wrap it to apply our base styles while preserving inline styling.
-	if (preRenderedHtml) {
-		return `<div style="${baseTextStyle} color: ${textColor};">${preRenderedHtml}</div>`;
-	}
 
 	// Clean up BlockNote's markdown export quirks
 	const cleanedMarkdown = markdown
@@ -263,7 +258,7 @@ function processInlineFormatting(text: string, stripBold = false): string {
 /**
  * Returns just the inner body content for preview rendering
  */
-export function renderEmailBodyHtml(markdown: string, styles: EmailStyles, preRenderedHtml?: string): string {
+export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
 	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth, headingWeight, bodyWeight } = styles;
 
 	return markdownToEmailHtml(markdown, {
@@ -274,6 +269,6 @@ export function renderEmailBodyHtml(markdown: string, styles: EmailStyles, preRe
 		maxWidth,
 		headingWeight,
 		bodyWeight,
-	}, preRenderedHtml);
+	});
 }
 
