@@ -119,14 +119,14 @@ body {
 }
 
 .pane-header {
-	padding: 16px 20px;
+	padding: 0 12px;
 	border-bottom: 1px solid var(--border);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 56px;
-	min-height: 56px;
-	max-height: 56px;
+	height: 44px;
+	min-height: 44px;
+	max-height: 44px;
 }
 
 .pane-header h2 {
@@ -312,27 +312,27 @@ body {
 
 /* Action Buttons */
 .copy-button {
-	padding: 6px 12px;
+	padding: 4px 8px;
 	background-color: transparent;
 	color: var(--foreground);
 	border: 1px solid var(--muted-foreground);
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
-	font-weight: 500;
+	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
 
 .clear-button {
-	padding: 6px 12px;
+	padding: 4px 8px;
 	background-color: transparent;
 	color: var(--muted-foreground);
 	border: none;
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
-	font-weight: 500;
+	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
