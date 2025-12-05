@@ -111,7 +111,7 @@ body {
 .app {
 	display: grid;
 	grid-template-columns: 1fr minmax(240px, 0.5fr) 1.2fr;
-	height: calc(100vh -24px);
+	height: calc(100vh - 24px);
 	gap: 1px;
 	background-color: var(--border);
 }
