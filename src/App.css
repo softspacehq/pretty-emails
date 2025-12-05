@@ -84,6 +84,21 @@ body {
 /* Editor Pane */
 .editor-pane .pane-content {
   padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.editor-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  cursor: text;
+}
+
+.editor-container .bn-container {
+  width: 100%;
+  max-width: 720px;
 }
 
 /* Controls Pane */

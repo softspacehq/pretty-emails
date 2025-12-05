@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
@@ -9,6 +9,8 @@ interface EditorProps {
 }
 
 export default function Editor({ onContentChange }: EditorProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   const editor = useCreateBlockNote({
     initialContent: [
       {
@@ -37,12 +39,25 @@ export default function Editor({ onContentChange }: EditorProps) {
     onContentChange(markdown);
   }, [editor, onContentChange]);
 
+  const handleContainerClick = useCallback((e: React.MouseEvent) => {
+    // Only focus if clicking on the container itself, not on the editor
+    if (e.target === containerRef.current) {
+      editor.focus("end");
+    }
+  }, [editor]);
+
   return (
-    <BlockNoteView
-      editor={editor}
-      onChange={handleChange}
-      theme="dark"
-    />
+    <div 
+      ref={containerRef}
+      className="editor-container"
+      onClick={handleContainerClick}
+    >
+      <BlockNoteView
+        editor={editor}
+        onChange={handleChange}
+        theme="dark"
+      />
+    </div>
   );
 }
 
