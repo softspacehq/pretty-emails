@@ -1,14 +1,40 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Editor from "./components/Editor";
 import EmailPreview from "./components/EmailPreview";
 import StyleControls from "./components/StyleControls";
 import { EmailStyles, defaultEmailStyles } from "./types";
 import { renderEmailHtml } from "./utils/emailRenderer";
 
+const STORAGE_KEYS = {
+  styles: "pretty-emails-styles",
+  content: "pretty-emails-content",
+};
+
+function loadStyles(): EmailStyles {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.styles);
+    if (saved) {
+      return { ...defaultEmailStyles, ...JSON.parse(saved) };
+    }
+  } catch (e) {
+    console.warn("Failed to load styles from localStorage:", e);
+  }
+  return defaultEmailStyles;
+}
+
 function App() {
   const [markdown, setMarkdown] = useState("");
-  const [styles, setStyles] = useState<EmailStyles>(defaultEmailStyles);
+  const [styles, setStyles] = useState<EmailStyles>(loadStyles);
   const [copied, setCopied] = useState(false);
+
+  // Persist styles to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.styles, JSON.stringify(styles));
+    } catch (e) {
+      console.warn("Failed to save styles to localStorage:", e);
+    }
+  }, [styles]);
 
   const handleStyleChange = useCallback(
     <K extends keyof EmailStyles>(key: K, value: EmailStyles[K]) => {
