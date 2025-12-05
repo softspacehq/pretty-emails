@@ -21,6 +21,7 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
     fontSize,
     lineHeight,
     paragraphSpacing,
+    maxWidth,
   });
 
   return `<!DOCTYPE html>
@@ -64,13 +65,17 @@ interface ContentStyles {
   fontSize: number;
   lineHeight: number;
   paragraphSpacing: number;
+  maxWidth: number;
 }
 
 /**
  * Converts markdown to inline-styled HTML for email clients.
  */
 function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
-  const { textColor, paragraphSpacing } = styles;
+  const { textColor, fontSize, lineHeight, paragraphSpacing } = styles;
+  
+  // Base style applied to all text elements for Gmail compatibility
+  const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight};`;
   
   // Clean up BlockNote's markdown export quirks
   const cleanedMarkdown = markdown
@@ -86,14 +91,12 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
   const flushList = () => {
     if (listItems.length > 0) {
-      const listStyle = listType === "ul" 
-        ? `margin: 0 0 ${paragraphSpacing}px 0; padding-left: 24px;`
-        : `margin: 0 0 ${paragraphSpacing}px 0; padding-left: 24px;`;
+      const listStyle = `margin: 0 0 ${paragraphSpacing}px 0; padding-left: 24px; ${baseTextStyle}`;
       
       const tag = listType;
       htmlParts.push(`\t\t\t\t\t\t\t\t<${tag} style="${listStyle}">`);
       listItems.forEach(item => {
-        htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: 10px;">${item}</li>`);
+        htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: 10px; ${baseTextStyle}">${item}</li>`);
       });
       htmlParts.push(`\t\t\t\t\t\t\t\t</${tag}>`);
       listItems = [];
@@ -119,21 +122,21 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
     if (h1Match) {
       flushList();
       const content = processInlineFormatting(h1Match[1]);
-      htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: 1.5em; font-weight: bold;">${content}</h1>`);
+      htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.5)}px; line-height: ${lineHeight}; font-weight: bold;">${content}</h1>`);
       continue;
     }
 
     if (h2Match) {
       flushList();
       const content = processInlineFormatting(h2Match[1]);
-      htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: 1.25em; font-weight: bold;">${content}</h2>`);
+      htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.25)}px; line-height: ${lineHeight}; font-weight: bold;">${content}</h2>`);
       continue;
     }
 
     if (h3Match) {
       flushList();
       const content = processInlineFormatting(h3Match[1]);
-      htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: 1.1em; font-weight: bold;">${content}</h3>`);
+      htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.1)}px; line-height: ${lineHeight}; font-weight: bold;">${content}</h3>`);
       continue;
     }
 
@@ -168,10 +171,20 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
       continue;
     }
 
+    // Check for standalone image: ![alt](url)
+    const imageMatch = trimmedLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imageMatch) {
+      flushList();
+      const alt = imageMatch[1] || '';
+      const src = imageMatch[2];
+      htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; display: block; border-radius: 4px;"></p>`);
+      continue;
+    }
+
     // Regular paragraph
     flushList();
     const content = processInlineFormatting(trimmedLine);
-    htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0;">${content}</p>`);
+    htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}">${content}</p>`);
   }
 
   flushList();
@@ -230,13 +243,14 @@ function processInlineFormatting(text: string): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-  const { textColor, fontSize, lineHeight, paragraphSpacing } = styles;
+  const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth } = styles;
   
   return markdownToEmailHtml(markdown, {
     textColor,
     fontSize,
     lineHeight,
     paragraphSpacing,
+    maxWidth,
   });
 }
 

@@ -5,14 +5,29 @@
 }
 
 :root {
-  --bg-primary: #0d0d0d;
+  /* Core colors - matching viewer theme */
+  --background: rgb(18, 18, 18);
+  --foreground: rgb(220, 220, 220);
+  --border: rgba(255, 255, 255, 0.2);
+  --muted-foreground: rgb(132, 132, 132);
+  --background-editable: rgb(0, 0, 0);
+  
+  /* App-specific */
   --bg-secondary: #161616;
-  --bg-tertiary: #1a1a1a;
-  --border-color: #2a2a2a;
-  --text-primary: #e8e8e8;
-  --text-secondary: #888;
   --accent: #4a9eff;
   --accent-hover: #6bb3ff;
+  
+  /* Font families - matching viewer */
+  --font-sans: system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  
+  /* Scrollbar */
+  --scrollbar-width: 6px;
+  --scrollbar-thumb: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--foreground) 20%, transparent);
+
+  /* Link color */
+  --link-color: #6bb3ff;
 }
 
 html, body, #root {
@@ -21,9 +36,9 @@ html, body, #root {
 }
 
 body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .app {
@@ -31,11 +46,11 @@ body {
   grid-template-columns: 1fr 260px 1fr;
   height: 100vh;
   gap: 1px;
-  background-color: var(--border-color);
+  background-color: var(--border);
 }
 
 .pane {
-  background-color: var(--bg-primary);
+  background-color: var(--background);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -43,11 +58,13 @@ body {
 
 .pane-header {
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 56px;
   min-height: 56px;
+  max-height: 56px;
 }
 
 .pane-header h2 {
@@ -55,7 +72,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 .pane-content {
@@ -92,24 +109,24 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   margin-bottom: 8px;
 }
 
 .control-input {
   width: 100%;
   padding: 10px 12px;
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  background-color: var(--background-editable);
+  border: 1px solid var(--border);
   border-radius: 6px;
-  color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--foreground);
+  font-family: var(--font-mono);
   font-size: 13px;
   transition: border-color 0.15s ease;
 }
 
 .control-input:hover {
-  border-color: #3a3a3a;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .control-input:focus {
@@ -130,7 +147,7 @@ body {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
-  background: var(--bg-tertiary);
+  background: var(--background-editable);
   border-radius: 2px;
   border: none;
   padding: 0;
@@ -160,9 +177,9 @@ body {
 }
 
 .range-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   margin-top: 6px;
   text-align: right;
 }
@@ -177,7 +194,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   cursor: pointer;
   overflow: hidden;
 }
@@ -222,7 +239,7 @@ body {
   color: #000;
   border: none;
   border-radius: 6px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -241,24 +258,176 @@ body {
   background-color: #22c55e;
 }
 
-/* BlockNote Overrides */
+/* ============================================================================
+   BLOCKNOTE STYLES - Matching Viewer App
+   ============================================================================ */
+
+.bn-container * {
+  transition: none !important;
+  color: var(--foreground) !important;
+}
+
 .bn-container {
-  height: 100%;
+  --bn-colors-editor-background: var(--background-editable) !important;
+  border-radius: 8px !important;
 }
 
 .bn-editor {
-  padding: 24px 32px;
+  padding: 14px 18px;
   min-height: 100%;
-  background-color: var(--bg-primary) !important;
-}
-
-.bn-container * {
-  color: var(--text-primary) !important;
+  background-color: var(--background) !important;
 }
 
 .bn-default-styles {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 16px;
+  font-weight: 450;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+
+/* Links */
+.bn-container a {
+  color: var(--link-color) !important;
+  font-weight: 500;
+}
+
+.bn-container a:hover {
+  opacity: 0.7;
+}
+
+/* Bold text */
+.bn-container strong {
+  font-weight: 660;
+}
+
+/* Headings */
+.bn-block-content[data-content-type="heading"] {
+  letter-spacing: 0.02rem;
+  --level: 2.0rem;
+  line-height: 2.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.bn-block-content[data-content-type="heading"][data-level="2"] {
+  --level: 1.6rem;
+  line-height: 2.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.bn-block-content[data-content-type="heading"][data-level="3"],
+.bn-block-content[data-content-type="heading"][data-level="4"],
+.bn-block-content[data-content-type="heading"][data-level="5"],
+.bn-block-content[data-content-type="heading"][data-level="6"] {
+  --level: 1.2rem;
+  line-height: 2rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+}
+
+/* Unordered lists - remove left border from nested items */
+.bn-block-group .bn-block-group .bn-block-outer:not([data-prev-depth-changed]):before {
+  border-left: none !important;
+}
+
+.bn-block-outer:not([data-prev-type])>.bn-block>.bn-block-content[data-content-type=bulletListItem]:before {
+  content: "•";
+  font-size: 1.6rem;
+  position: relative;
+  top: -0.525rem;
+  right: -0.05rem;
+  transition: none !important;
+}
+
+/* Checklists */
+.bn-block-content[data-content-type="checkListItem"] input[type="checkbox"] {
+  margin-top: 6.5px;
+  margin-left: 5px;
+  margin-right: 8px;
+  background-color: transparent !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  border: 1px solid var(--foreground) !important;
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+  border-radius: 0px !important;
+  position: relative !important;
+}
+
+.bn-block-content[data-content-type="checkListItem"] input[type="checkbox"]:checked {
+  background-color: var(--foreground) !important;
+}
+
+.bn-block-content[data-content-type="checkListItem"] input[type="checkbox"]:checked::after {
+  content: "✓" !important;
+  position: absolute !important;
+  top: -0.2rem !important;
+  left: -0.02rem !important;
+  color: var(--background) !important;
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+}
+
+/* Hide side menu */
+.bn-side-menu {
+  display: none !important;
+}
+
+/* Toolbar styling */
+.bn-toolbar * {
+  font-family: var(--font-mono) !important;
+  font-weight: 400;
+}
+
+.bn-toolbar button {
+  cursor: default !important;
+}
+
+/* Placeholder styling */
+.bn-block-content .bn-inline-content:has(> .ProseMirror-trailingBreak:only-child)::before {
+  opacity: 0.3;
+  color: inherit;
+  font: inherit;
+}
+
+/* Code block styling */
+.bn-block-content[data-content-type="codeBlock"] pre {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.bn-block-content[data-content-type="codeBlock"] pre::-webkit-scrollbar {
+  height: var(--scrollbar-width);
+  width: var(--scrollbar-width);
+  background: transparent;
+}
+
+.bn-block-content[data-content-type="codeBlock"] pre::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.bn-block-content[data-content-type="codeBlock"] pre:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+
+.bn-block-content[data-content-type="codeBlock"] pre::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.bn-block-content[data-content-type="codeBlock"] {
+  margin: 0.8rem 0;
+  padding: 0rem;
+}
+
+.bn-container pre {
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
 /* Scrollbar Styling */
@@ -272,12 +441,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive */
@@ -303,4 +472,3 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-

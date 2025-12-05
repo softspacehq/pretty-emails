@@ -60,7 +60,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         <input
           type="range"
           className="control-input control-range"
-          min={1.4}
+          min={1.0}
           max={2.0}
           step={0.1}
           value={styles.lineHeight}

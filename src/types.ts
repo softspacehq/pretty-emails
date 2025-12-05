@@ -12,7 +12,7 @@ export const defaultEmailStyles: EmailStyles = {
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   fontSize: 16,
   maxWidth: 560,
-  lineHeight: 1.6,
+  lineHeight: 1.5,
   textColor: '#1a1a1a',
   backgroundColor: '#ffffff',
   paragraphSpacing: 18,
