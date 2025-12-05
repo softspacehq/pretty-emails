@@ -77,6 +77,11 @@ body {
 	font-weight: 500;
 }
 
+.footer-center {
+	font-weight: 400;
+	color: #888888;
+}
+
 .footer-right {
 	font-weight: 400;
 }
@@ -132,9 +137,9 @@ body {
 .pane-header h2 {
 	font-size: 14px;
 	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	/* font-stretch: expanded; */
+	/* text-transform: uppercase; */
+	/* letter-spacing: 0.05em; */
+	font-stretch: semi-expanded;
 	color: var(--muted-foreground);
 }
 
@@ -319,7 +324,7 @@ body {
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
@@ -332,7 +337,7 @@ body {
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }

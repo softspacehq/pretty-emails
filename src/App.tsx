@@ -82,6 +82,7 @@ function App() {
 		<>
 			<footer className="app-footer">
 				<span className="footer-left">PRETTY EMAILS</span>
+				<span className="footer-center">Content stored locally only</span>
 				<span className="footer-right">
 					WITH ❤️ FROM{" "}
 					<a href="https://www.soft.space" target="_blank" rel="noopener noreferrer">
