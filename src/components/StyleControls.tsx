@@ -50,9 +50,9 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         <input
           type="range"
           className="control-input control-range"
-          min={400}
-          max={900}
-          step={20}
+          min={300}
+          max={1200}
+          step={10}
           value={styles.maxWidth}
           onChange={(e) => onStyleChange("maxWidth", Number(e.target.value))}
         />
@@ -142,7 +142,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={100}
+          max={200}
           step={4}
           value={styles.marginTop}
           onChange={(e) => onStyleChange("marginTop", Number(e.target.value))}
@@ -159,7 +159,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={100}
+          max={200}
           step={4}
           value={styles.marginSides}
           onChange={(e) => onStyleChange("marginSides", Number(e.target.value))}
@@ -176,7 +176,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={100}
+          max={200}
           step={4}
           value={styles.marginBottom}
           onChange={(e) => onStyleChange("marginBottom", Number(e.target.value))}
