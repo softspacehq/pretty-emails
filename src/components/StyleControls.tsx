@@ -176,23 +176,6 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
 					onChange={(e) => onStyleChange("marginBottom", Number(e.target.value))}
 				/>
 			</div>
-
-			{/* Image Corner Radius */}
-			<div className="control-group">
-				<label className="control-label">
-					Image Corner Radius
-					<span className="range-value">{styles.imageCornerRadius}px</span>
-				</label>
-				<input
-					type="range"
-					className="control-input control-range"
-					min={0}
-					max={24}
-					step={1}
-					value={styles.imageCornerRadius}
-					onChange={(e) => onStyleChange("imageCornerRadius", Number(e.target.value))}
-				/>
-			</div>
 		</>
 	);
 }

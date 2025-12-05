@@ -35,7 +35,6 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		maxWidth,
 		headingWeight,
 		bodyWeight,
-		imageCornerRadius,
 	} = styles;
 
 	// Format styles to match browser serialization (no spaces, rgb colors, escaped quotes)
@@ -52,7 +51,6 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		paragraphSpacing,
 		headingWeight,
 		bodyWeight,
-		imageCornerRadius,
 	});
 
 	// Remove margin from last element
@@ -80,7 +78,6 @@ interface FlatHtmlStyles {
 	paragraphSpacing: number;
 	headingWeight: number;
 	bodyWeight: number;
-	imageCornerRadius: number;
 }
 
 /**
@@ -88,7 +85,7 @@ interface FlatHtmlStyles {
  * Produces simple structure similar to manual copy-paste for Gmail compatibility.
  */
 function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] {
-	const { baseStyle, rgbColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
+	const { baseStyle, rgbColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight } = styles;
 
 	// Clean up BlockNote's markdown export quirks
 	const cleanedMarkdown = markdown
@@ -225,7 +222,7 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			const alt = imageMatch[1] || '';
 			const src = imageMatch[2];
 			const pStyle = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}`;
-			const imgStyle = `max-width:100%;height:auto;display:block;border-radius:${imageCornerRadius}px`;
+			const imgStyle = `max-width:100%;height:auto;display:block`;
 			htmlParts.push(`<p style="${pStyle}"><img src="${src}" alt="${alt}" style="${imgStyle}"></p>`);
 			continue;
 		}
@@ -293,7 +290,7 @@ function processInlineFormatting(text: string, stripBold = false): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-	const { fontFamily, textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
+	const { fontFamily, textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight } = styles;
 
 	const rgbColor = hexToRgb(textColor);
 	const escapedFontFamily = escapeFontFamily(fontFamily);
@@ -307,7 +304,6 @@ export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): stri
 		paragraphSpacing,
 		headingWeight,
 		bodyWeight,
-		imageCornerRadius,
 	});
 
 	// Remove margin from last element
