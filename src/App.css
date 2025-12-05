@@ -215,15 +215,19 @@ body {
 .preview-pane .pane-content {
   padding: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .email-preview-container {
   width: 100%;
-  min-height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .email-preview-inner {
-  min-height: 100%;
+  flex: 1;
 }
 
 /* Copy Button */
