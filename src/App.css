@@ -14,8 +14,8 @@
 
 	/* App-specific */
 	--bg-secondary: #161616;
-	--accent: #4a9eff;
-	--accent-hover: #6bb3ff;
+	--accent: rgba(255, 255, 255, 0.9);
+	--accent-hover: rgba(255, 255, 255, 1);
 
 	/* Font families - matching viewer */
 	--font-sans: system-ui, sans-serif;
@@ -172,8 +172,8 @@ body {
 
 .control-range::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	width: 16px;
-	height: 16px;
+	width: 10px;
+	height: 10px;
 	background: var(--accent);
 	border-radius: 50%;
 	cursor: pointer;
@@ -181,12 +181,12 @@ body {
 }
 
 .control-range::-webkit-slider-thumb:hover {
-	transform: scale(1.1);
+	transform: scale(1.15);
 }
 
 .control-range::-moz-range-thumb {
-	width: 16px;
-	height: 16px;
+	width: 10px;
+	height: 10px;
 	background: var(--accent);
 	border: none;
 	border-radius: 50%;
@@ -249,20 +249,21 @@ body {
 
 /* Copy Button */
 .copy-button {
-	padding: 8px 16px;
-	background-color: var(--accent);
-	color: #000;
-	border: none;
-	border-radius: 6px;
+	padding: 6px 12px;
+	background-color: transparent;
+	color: var(--foreground);
+	border: 1px solid var(--muted-foreground);
+	border-radius: 4px;
 	font-family: var(--font-sans);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 12px;
+	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
 
 .copy-button:hover {
-	background-color: var(--accent-hover);
+	border-color: var(--foreground);
+	color: var(--foreground);
 }
 
 .copy-button:active {
@@ -270,7 +271,8 @@ body {
 }
 
 .copy-button.copied {
-	background-color: #22c55e;
+	border-color: #22c55e;
+	color: #22c55e;
 }
 
 /* ============================================================================
