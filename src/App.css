@@ -415,6 +415,21 @@ body {
 	display: none !important;
 }
 
+/* Hide image resize handles */
+.bn-resize-handle {
+	display: none !important;
+}
+
+/* Increase gap between blocks (except list items and last block) */
+.bn-block-outer:not(:last-child) {
+	margin-bottom: 0.5rem;
+}
+
+.bn-block-outer:has(> .bn-block > .bn-block-content[data-content-type="bulletListItem"]),
+.bn-block-outer:has(> .bn-block > .bn-block-content[data-content-type="numberedListItem"]) {
+	margin-bottom: 0;
+}
+
 /* Toolbar styling */
 .bn-toolbar * {
 	font-family: var(--font-mono) !important;
