@@ -30,8 +30,8 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         <input
           type="range"
           className="control-input control-range"
-          min={14}
-          max={20}
+          min={12}
+          max={24}
           step={1}
           value={styles.fontSize}
           onChange={(e) => onStyleChange("fontSize", Number(e.target.value))}
@@ -45,8 +45,8 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         <input
           type="range"
           className="control-input control-range"
-          min={480}
-          max={720}
+          min={400}
+          max={900}
           step={20}
           value={styles.maxWidth}
           onChange={(e) => onStyleChange("maxWidth", Number(e.target.value))}
@@ -61,7 +61,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={1.0}
-          max={2.0}
+          max={2.5}
           step={0.1}
           value={styles.lineHeight}
           onChange={(e) => onStyleChange("lineHeight", Number(e.target.value))}
@@ -115,8 +115,8 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         <input
           type="range"
           className="control-input control-range"
-          min={12}
-          max={24}
+          min={0}
+          max={40}
           step={2}
           value={styles.paragraphSpacing}
           onChange={(e) => onStyleChange("paragraphSpacing", Number(e.target.value))}
@@ -131,7 +131,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={60}
+          max={100}
           step={4}
           value={styles.marginTop}
           onChange={(e) => onStyleChange("marginTop", Number(e.target.value))}
@@ -146,7 +146,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={60}
+          max={100}
           step={4}
           value={styles.marginSides}
           onChange={(e) => onStyleChange("marginSides", Number(e.target.value))}
@@ -161,7 +161,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           type="range"
           className="control-input control-range"
           min={0}
-          max={60}
+          max={100}
           step={4}
           value={styles.marginBottom}
           onChange={(e) => onStyleChange("marginBottom", Number(e.target.value))}
