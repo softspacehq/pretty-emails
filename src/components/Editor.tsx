@@ -83,6 +83,32 @@ export default function Editor({ onContentChange }: EditorProps) {
 		onContentChange(markdown);
 	}, [editor, onContentChange]);
 
+	// Convert file blocks to image blocks when they're images (fixes drag-drop behavior)
+	useEffect(() => {
+		const convertFileBlocksToImages = () => {
+			const blocks = editor.document;
+			for (const block of blocks) {
+				if (block.type === "file") {
+					const props = block.props as { name?: string; url?: string };
+					const name = props.name || "";
+					const url = props.url || "";
+					// Check if it's an image by extension or data URL
+					const isImage = /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(name) ||
+						url.startsWith("data:image/");
+					if (isImage && url) {
+						editor.updateBlock(block, {
+							type: "image",
+							props: { url },
+						});
+					}
+				}
+			}
+		};
+
+		// Subscribe to changes
+		return editor.onChange(convertFileBlocksToImages);
+	}, [editor]);
+
 	const handleChange = useCallback(() => {
 		// Debounce all processing to keep typing responsive
 		if (updateTimeoutRef.current) {
