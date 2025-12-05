@@ -113,7 +113,7 @@ body {
 }
 
 .control-group {
-	margin-bottom: 24px;
+	margin-bottom: 20px;
 }
 
 .control-group:last-child {
@@ -129,7 +129,7 @@ body {
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: var(--muted-foreground);
-	margin-bottom: 8px;
+	margin-bottom: 2px;
 }
 
 .control-input {
