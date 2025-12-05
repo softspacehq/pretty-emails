@@ -1,94 +1,94 @@
 import { EmailStyles } from "../types";
 
 /**
- * Converts markdown content to email-safe HTML with inline styles.
- * Uses table-based layout for maximum email client compatibility.
+ * Converts markdown content to simple, flat HTML with inline styles.
+ * Mimics the structure of a manual copy-paste for best Gmail mobile compatibility.
+ * No tables or max-width wrappers - just styled semantic elements.
  */
+// Convert hex color to rgb() format for Gmail compatibility
+function hexToRgb(hex: string): string {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (result) {
+		const r = parseInt(result[1], 16);
+		const g = parseInt(result[2], 16);
+		const b = parseInt(result[3], 16);
+		return `rgb(${r},${g},${b})`;
+	}
+	return hex; // Return as-is if not valid hex
+}
+
+// Escape quotes in font-family for HTML attribute
+function escapeFontFamily(fontFamily: string): string {
+	return fontFamily.replace(/"/g, '&quot;');
+}
+
 export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 	const {
 		fontFamily,
 		fontSize,
-		maxWidth,
 		lineHeight,
 		textColor,
-		backgroundColor,
 		paragraphSpacing,
 		marginTop,
 		marginSides,
 		marginBottom,
+		maxWidth,
 		headingWeight,
 		bodyWeight,
+		imageCornerRadius,
 	} = styles;
 
-	const imageCornerRadius = styles.imageCornerRadius;
+	// Format styles to match browser serialization (no spaces, rgb colors, escaped quotes)
+	// This format is preserved better by Gmail
+	const rgbColor = hexToRgb(textColor);
+	const escapedFontFamily = escapeFontFamily(fontFamily);
+	const baseStyle = `color:${rgbColor};font-family:${escapedFontFamily};font-size:${fontSize}px;line-height:${lineHeight};`;
 
-	// Convert markdown to HTML elements
-	const bodyContent = markdownToEmailHtml(markdown, {
-		textColor,
+	const htmlParts = markdownToFlatHtml(markdown, {
+		baseStyle,
+		rgbColor,
 		fontSize,
 		lineHeight,
 		paragraphSpacing,
-		maxWidth,
 		headingWeight,
 		bodyWeight,
 		imageCornerRadius,
 	});
 
-	return `<!DOCTYPE html>
-<html>
+	// Remove margin from last element
+	if (htmlParts.length > 0) {
+		const lastIndex = htmlParts.length - 1;
+		htmlParts[lastIndex] = htmlParts[lastIndex].replace(
+			/margin:0 0 \d+px/,
+			"margin:0"
+		);
+	}
 
-<head>
-\t<meta charset="UTF-8">
-\t<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+	// Simple div wrapper with margins, max-width, and centered via margin:auto
+	const wrapperStyle = `padding:${marginTop}px ${marginSides}px ${marginBottom}px;max-width:${maxWidth}px;margin:0 auto`;
 
-<body style="margin: 0; padding: 0; background-color: ${backgroundColor};">
-\t<table width="100%" cellpadding="0" cellspacing="0" border="0">
-\t\t<tr>
-\t\t\t<td align="center" style="padding: ${marginTop}px ${marginSides}px ${marginBottom}px ${marginSides}px;">
-\t\t\t\t<!--[if mso]>
-\t\t\t\t<table width="${maxWidth}" cellpadding="0" cellspacing="0" border="0"><tr><td>
-\t\t\t\t<![endif]-->
-\t\t\t\t<div style="max-width: ${maxWidth}px; margin: 0 auto;">
-\t\t\t\t\t<table width="100%" cellpadding="0" cellspacing="0" border="0"
-\t\t\t\t\t\tstyle="font-family: ${fontFamily}; font-size: ${fontSize}px; line-height: ${lineHeight}; color: ${textColor};">
-\t\t\t\t\t\t<tr>
-\t\t\t\t\t\t\t<td>
-${bodyContent}
-\t\t\t\t\t\t\t</td>
-\t\t\t\t\t\t</tr>
-\t\t\t\t\t</table>
-\t\t\t\t</div>
-\t\t\t\t<!--[if mso]>
-\t\t\t\t</td></tr></table>
-\t\t\t\t<![endif]-->
-\t\t\t</td>
-\t\t</tr>
-\t</table>
-</body>
-
-</html>`;
+	return `<div dir="ltr" style="${wrapperStyle}">
+${htmlParts.join("\n")}
+</div>`;
 }
 
-interface ContentStyles {
-	textColor: string;
+interface FlatHtmlStyles {
+	baseStyle: string;
+	rgbColor: string;
 	fontSize: number;
 	lineHeight: number;
 	paragraphSpacing: number;
-	maxWidth: number;
 	headingWeight: number;
 	bodyWeight: number;
 	imageCornerRadius: number;
 }
 
 /**
- * Converts markdown to inline-styled HTML for email clients.
+ * Converts markdown to flat HTML with full inline styles on each element.
+ * Produces simple structure similar to manual copy-paste for Gmail compatibility.
  */
-function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
-
-	// Base style applied to all text elements for Gmail compatibility
-	const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${bodyWeight};`;
+function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] {
+	const { baseStyle, rgbColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
 
 	// Clean up BlockNote's markdown export quirks
 	const cleanedMarkdown = markdown
@@ -106,25 +106,26 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 	const flushBlockquote = () => {
 		if (blockquoteLines.length > 0) {
-			const blockquoteStyle = `margin: 0 0 ${paragraphSpacing}px 0; padding: 0 16px; border-left: 4px solid ${textColor}; opacity: 0.85; ${baseTextStyle}`;
+			const blockquoteStyle = `margin:0 0 ${paragraphSpacing}px;padding:0 0 0 16px;border-left:4px solid ${rgbColor};${baseStyle}`;
 			const content = blockquoteLines.map(line => processInlineFormatting(line)).join('<br>');
-			htmlParts.push(`\t\t\t\t\t\t\t\t<blockquote style="${blockquoteStyle}">${content}</blockquote>`);
+			htmlParts.push(`<blockquote style="${blockquoteStyle}">${content}</blockquote>`);
 			blockquoteLines = [];
 		}
 	};
 
 	const flushList = () => {
 		if (listItems.length > 0) {
-			const listStyle = `margin: 0 0 ${paragraphSpacing}px 0; padding-left: 24px; ${baseTextStyle}`;
-
+			const listStyle = `margin:0 0 ${paragraphSpacing}px;padding:0 0 0 24px;${baseStyle}`;
 			const tag = listType;
 			const startAttr = tag === "ol" ? ` start="${olStartNumber}"` : "";
-			htmlParts.push(`\t\t\t\t\t\t\t\t<${tag}${startAttr} style="${listStyle}">`);
 			const listItemSpacing = Math.round(paragraphSpacing / 2);
+
+			let listHtml = `<${tag}${startAttr} style="${listStyle}">`;
 			listItems.forEach(item => {
-				htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: ${listItemSpacing}px; ${baseTextStyle}">${item}</li>`);
+				listHtml += `<li style="margin:0 0 ${listItemSpacing}px;padding:0;line-height:${lineHeight}">${item}</li>`;
 			});
-			htmlParts.push(`\t\t\t\t\t\t\t\t</${tag}>`);
+			listHtml += `</${tag}>`;
+			htmlParts.push(listHtml);
 			listItems = [];
 			inList = false;
 		}
@@ -135,7 +136,6 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		const trimmedLine = line.trim();
 
 		// Skip empty lines and lines that are just backslashes
-		// Don't flush lists on empty lines - BlockNote adds empty lines between list items
 		if (trimmedLine === "" || trimmedLine === "\\" || trimmedLine === "\\\\") {
 			flushBlockquote();
 			continue;
@@ -150,7 +150,8 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h1Match[1], true);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.75)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h1>`);
+			const h1Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.75)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			htmlParts.push(`<h1 style="${h1Style}">${content}</h1>`);
 			continue;
 		}
 
@@ -158,7 +159,8 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h2Match[1], true);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.5)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h2>`);
+			const h2Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.5)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			htmlParts.push(`<h2 style="${h2Style}">${content}</h2>`);
 			continue;
 		}
 
@@ -166,7 +168,8 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h3Match[1], true);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.2)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h3>`);
+			const h3Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.2)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			htmlParts.push(`<h3 style="${h3Style}">${content}</h3>`);
 			continue;
 		}
 
@@ -210,7 +213,7 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		if (trimmedLine.match(/^[-*_]{3,}$/)) {
 			flushList();
 			flushBlockquote();
-			htmlParts.push(`\t\t\t\t\t\t\t\t<hr style="border: none; border-top: 1px solid ${textColor}; margin: ${paragraphSpacing}px 0; opacity: 0.3;">`);
+			htmlParts.push(`<hr style="border:none;border-top:1px solid ${rgbColor};margin:${paragraphSpacing}px 0;opacity:0.3">`);
 			continue;
 		}
 
@@ -221,7 +224,9 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 			flushBlockquote();
 			const alt = imageMatch[1] || '';
 			const src = imageMatch[2];
-			htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; display: block; border-radius: ${imageCornerRadius}px;"></p>`);
+			const pStyle = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}`;
+			const imgStyle = `max-width:100%;height:auto;display:block;border-radius:${imageCornerRadius}px`;
+			htmlParts.push(`<p style="${pStyle}"><img src="${src}" alt="${alt}" style="${imgStyle}"></p>`);
 			continue;
 		}
 
@@ -229,22 +234,14 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		flushList();
 		flushBlockquote();
 		const content = processInlineFormatting(trimmedLine);
-		htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}">${content}</p>`);
+		const pStyle = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-weight:${bodyWeight}`;
+		htmlParts.push(`<p style="${pStyle}">${content}</p>`);
 	}
 
 	flushList();
 	flushBlockquote();
 
-	// Remove margin from last element
-	if (htmlParts.length > 0) {
-		const lastIndex = htmlParts.length - 1;
-		htmlParts[lastIndex] = htmlParts[lastIndex].replace(
-			/margin: 0 0 \d+px 0;/,
-			"margin: 0;"
-		);
-	}
-
-	return htmlParts.join("\n");
+	return htmlParts;
 }
 
 /**
@@ -280,13 +277,13 @@ function processInlineFormatting(text: string, stripBold = false): string {
 	// Inline code: `code`
 	result = result.replace(
 		/`(.+?)`/g,
-		'<code style="background-color: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 3px; font-family: monospace;">$1</code>'
+		'<code style="background-color:rgba(0,0,0,0.05);padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>'
 	);
 
 	// Links: [text](url)
 	result = result.replace(
 		/\[(.+?)\]\((.+?)\)/g,
-		'<a href="$2" style="color: inherit; text-decoration: underline;">$1</a>'
+		'<a href="$2" style="color:inherit;text-decoration:underline">$1</a>'
 	);
 
 	return result;
@@ -296,17 +293,32 @@ function processInlineFormatting(text: string, stripBold = false): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth, headingWeight, bodyWeight, imageCornerRadius } = styles;
+	const { fontFamily, textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
 
-	return markdownToEmailHtml(markdown, {
-		textColor,
+	const rgbColor = hexToRgb(textColor);
+	const escapedFontFamily = escapeFontFamily(fontFamily);
+	const baseStyle = `color:${rgbColor};font-family:${escapedFontFamily};font-size:${fontSize}px;line-height:${lineHeight};`;
+
+	const htmlParts = markdownToFlatHtml(markdown, {
+		baseStyle,
+		rgbColor,
 		fontSize,
 		lineHeight,
 		paragraphSpacing,
-		maxWidth,
 		headingWeight,
 		bodyWeight,
 		imageCornerRadius,
 	});
+
+	// Remove margin from last element
+	if (htmlParts.length > 0) {
+		const lastIndex = htmlParts.length - 1;
+		htmlParts[lastIndex] = htmlParts[lastIndex].replace(
+			/margin:0 0 \d+px/,
+			"margin:0"
+		);
+	}
+
+	return htmlParts.join("\n");
 }
 
