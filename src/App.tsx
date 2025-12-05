@@ -79,48 +79,59 @@ function App() {
 	}, [markdown, styles]);
 
 	return (
-		<div className="app">
-			{/* Left Pane: Editor */}
-			<div className="pane editor-pane">
-				<div className="pane-header">
-					<h2>Compose</h2>
-					<button className="clear-button" onClick={handleClear}>
-						Clear
-					</button>
+		<>
+			<footer className="app-footer">
+				<span className="footer-left">PRETTY EMAILS</span>
+				<span className="footer-right">
+					WITH ❤️ FROM{" "}
+					<a href="https://www.soft.space" target="_blank" rel="noopener noreferrer">
+						SOFTSPACE INC.
+					</a>
+				</span>
+			</footer>
+			<div className="app">
+				{/* Left Pane: Editor */}
+				<div className="pane editor-pane">
+					<div className="pane-header">
+						<h2>Compose</h2>
+						<button className="clear-button" onClick={handleClear}>
+							Clear
+						</button>
+					</div>
+					<div className="pane-content">
+						<Editor key={editorKey} onContentChange={setMarkdown} />
+					</div>
 				</div>
-				<div className="pane-content">
-					<Editor key={editorKey} onContentChange={setMarkdown} />
-				</div>
-			</div>
 
-			{/* Middle Pane: Style Controls */}
-			<div className="pane controls-pane">
-				<div className="pane-header">
-					<h2>Style</h2>
+				{/* Middle Pane: Style Controls */}
+				<div className="pane controls-pane">
+					<div className="pane-header">
+						<h2>Style</h2>
+					</div>
+					<div className="pane-content">
+						<StyleControls styles={styles} onStyleChange={handleStyleChange} />
+					</div>
 				</div>
-				<div className="pane-content">
-					<StyleControls styles={styles} onStyleChange={handleStyleChange} />
-				</div>
-			</div>
 
-			{/* Right Pane: Preview */}
-			<div className="pane preview-pane">
-				<div className="pane-header">
-					<h2>Preview</h2>
-					<button
-						className={`copy-button ${copied ? "copied" : ""}`}
-						onClick={handleCopy}
-					>
-						{copied ? "Ready to paste" : "Copy for Gmail"}
-					</button>
-				</div>
-				<div className="pane-content">
-					<div className="email-preview-container">
-						<EmailPreview markdown={markdown} styles={styles} />
+				{/* Right Pane: Preview */}
+				<div className="pane preview-pane">
+					<div className="pane-header">
+						<h2>Preview</h2>
+						<button
+							className={`copy-button ${copied ? "copied" : ""}`}
+							onClick={handleCopy}
+						>
+							{copied ? "Ready to paste" : "Copy for Gmail"}
+						</button>
+					</div>
+					<div className="pane-content">
+						<div className="email-preview-container">
+							<EmailPreview markdown={markdown} styles={styles} />
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 

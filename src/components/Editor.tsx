@@ -8,6 +8,7 @@ import "@blocknote/core/fonts/inter.css";
 const STORAGE_KEY = "pretty-emails-content";
 const MAX_IMAGE_WIDTH = 800;
 const JPEG_QUALITY = 0.8;
+const UPDATE_DEBOUNCE_MS = 1000; // Wait after last keystroke before updating preview/storage
 
 async function uploadFile(file: File): Promise<string> {
 	// For non-images, just return base64
@@ -111,6 +112,7 @@ export default function Editor({ onContentChange }: EditorProps) {
 
 	const handleChange = useCallback(() => {
 		// Debounce all processing to keep typing responsive
+		// Waits until user stops typing before triggering expensive operations
 		if (updateTimeoutRef.current) {
 			clearTimeout(updateTimeoutRef.current);
 		}
@@ -125,7 +127,7 @@ export default function Editor({ onContentChange }: EditorProps) {
 			} catch (e) {
 				console.warn("Failed to save content to localStorage:", e);
 			}
-		}, 150);
+		}, UPDATE_DEBOUNCE_MS);
 	}, [editor, onContentChange]);
 
 	const handleContainerClick = useCallback((e: React.MouseEvent) => {

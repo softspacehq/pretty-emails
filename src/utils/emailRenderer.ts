@@ -67,8 +67,13 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 	// Simple div wrapper with margins, max-width, and centered via margin:auto
 	const wrapperStyle = `padding:${marginTop}px ${marginSides}px ${marginBottom}px;max-width:${maxWidth}px;margin:0 auto`;
 
+	// Footer banner with subtle gray text
+	const footerStyle = `margin-top:${Math.max(paragraphSpacing * 3, 40)}px;padding-top:16px;border-top:1px solid rgba(128,128,128,0.2);text-align:center;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgb(128,128,128);line-height:1`;
+	const footerLinkStyle = `color:rgb(128,128,128);text-decoration:underline;text-underline-offset:2px`;
+
 	return `<div dir="ltr" style="${wrapperStyle}">
 ${htmlParts.join("\n")}
+<div style="${footerStyle}">Crafted using <a href="https://www.pretty-emails.com" style="${footerLinkStyle}">Pretty Emails</a></div>
 </div>`;
 }
 
@@ -217,20 +222,25 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			continue;
 		}
 
-		// Check for standalone image: ![alt](url)
-		const imageMatch = trimmedLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-		if (imageMatch) {
+		// Check for line containing only images: ![alt](url) (one or more)
+		// This regex matches lines that are entirely composed of image markdown
+		const imageOnlyLineMatch = trimmedLine.match(/^(!\[[^\]]*\]\([^)]+\))+$/);
+		if (imageOnlyLineMatch) {
 			flushList();
 			flushBlockquote();
-			const alt = imageMatch[1] || '';
-			const src = imageMatch[2];
-			const pStyle = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}`;
-			// Wrap image in a div with rounded corners and overflow:hidden for Gmail compatibility
-			// Gmail strips border-radius from images, but respects it on containing divs
-			// line-height:0 prevents the inline-block baseline gap from cutting off the bottom
-			const wrapperStyle = `border-radius:${imageCornerRadius}px;overflow:hidden;display:inline-block;line-height:0`;
-			const imgStyle = `max-width:100%;height:auto;display:block`;
-			htmlParts.push(`<p style="${pStyle}"><div style="${wrapperStyle}"><img src="${src}" alt="${alt}" style="${imgStyle}"></div></p>`);
+			// Extract all images from the line
+			const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+			let match;
+			while ((match = imageRegex.exec(trimmedLine)) !== null) {
+				const alt = match[1] || '';
+				const src = match[2];
+				// Wrap image in a div with rounded corners and overflow:hidden for Gmail compatibility
+				// Gmail strips border-radius from images, but respects it on containing divs
+				// line-height:0 prevents the inline-block baseline gap from cutting off the bottom
+				const wrapperStyle = `margin:0 0 ${paragraphSpacing}px;padding:0;border-radius:${imageCornerRadius}px;overflow:hidden;display:inline-block;line-height:0`;
+				const imgStyle = `max-width:100%;height:auto;display:block`;
+				htmlParts.push(`<div style="${wrapperStyle}"><img src="${src}" alt="${alt}" style="${imgStyle}"></div>`);
+			}
 			continue;
 		}
 
@@ -282,6 +292,12 @@ function processInlineFormatting(text: string, stripBold = false): string {
 	result = result.replace(
 		/`(.+?)`/g,
 		'<code style="background-color:rgba(0,0,0,0.05);padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>'
+	);
+
+	// Inline images: ![alt](url) - must be before links since syntax is similar
+	result = result.replace(
+		/!\[([^\]]*)\]\(([^)]+)\)/g,
+		'<img src="$2" alt="$1" style="max-width:100%;height:auto">'
 	);
 
 	// Links: [text](url)
