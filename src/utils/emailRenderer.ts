@@ -16,6 +16,8 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		marginTop,
 		marginSides,
 		marginBottom,
+		headingWeight,
+		bodyWeight,
 	} = styles;
 
 	// Convert markdown to HTML elements
@@ -25,6 +27,8 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		lineHeight,
 		paragraphSpacing,
 		maxWidth,
+		headingWeight,
+		bodyWeight,
 	});
 
 	return `<!DOCTYPE html>
@@ -69,16 +73,18 @@ interface ContentStyles {
 	lineHeight: number;
 	paragraphSpacing: number;
 	maxWidth: number;
+	headingWeight: number;
+	bodyWeight: number;
 }
 
 /**
  * Converts markdown to inline-styled HTML for email clients.
  */
 function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing } = styles;
+	const { textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight } = styles;
 
 	// Base style applied to all text elements for Gmail compatibility
-	const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight};`;
+	const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${bodyWeight};`;
 
 	// Clean up BlockNote's markdown export quirks
 	const cleanedMarkdown = markdown
@@ -124,22 +130,22 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 		if (h1Match) {
 			flushList();
-			const content = processInlineFormatting(h1Match[1]);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.75)}px; line-height: ${lineHeight * 0.9}; font-weight: normal;">${content}</h1>`);
+			const content = processInlineFormatting(h1Match[1], true);
+			htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.75)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h1>`);
 			continue;
 		}
 
 		if (h2Match) {
 			flushList();
-			const content = processInlineFormatting(h2Match[1]);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.5)}px; line-height: ${lineHeight * 0.9}; font-weight: normal;">${content}</h2>`);
+			const content = processInlineFormatting(h2Match[1], true);
+			htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.5)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h2>`);
 			continue;
 		}
 
 		if (h3Match) {
 			flushList();
-			const content = processInlineFormatting(h3Match[1]);
-			htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.2)}px; line-height: ${lineHeight * 0.9}; font-weight: normal;">${content}</h3>`);
+			const content = processInlineFormatting(h3Match[1], true);
+			htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.2)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h3>`);
 			continue;
 		}
 
@@ -206,8 +212,9 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 /**
  * Processes inline markdown formatting (bold, italic, links, etc.)
+ * @param stripBold - If true, removes bold formatting (used for headings where weight is controlled separately)
  */
-function processInlineFormatting(text: string): string {
+function processInlineFormatting(text: string, stripBold = false): string {
 	let result = text;
 
 	// Escape HTML entities first (but preserve already escaped ones)
@@ -217,8 +224,14 @@ function processInlineFormatting(text: string): string {
 		.replace(/>/g, "&gt;");
 
 	// Bold: **text** or __text__
-	result = result.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-	result = result.replace(/__(.+?)__/g, "<strong>$1</strong>");
+	if (stripBold) {
+		// Strip bold markers, keep the text
+		result = result.replace(/\*\*(.+?)\*\*/g, "$1");
+		result = result.replace(/__(.+?)__/g, "$1");
+	} else {
+		result = result.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+		result = result.replace(/__(.+?)__/g, "<strong>$1</strong>");
+	}
 
 	// Italic: *text* or _text_
 	result = result.replace(/\*(.+?)\*/g, "<em>$1</em>");
@@ -246,7 +259,7 @@ function processInlineFormatting(text: string): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth } = styles;
+	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth, headingWeight, bodyWeight } = styles;
 
 	return markdownToEmailHtml(markdown, {
 		textColor,
@@ -254,6 +267,8 @@ export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): stri
 		lineHeight,
 		paragraphSpacing,
 		maxWidth,
+		headingWeight,
+		bodyWeight,
 	});
 }
 

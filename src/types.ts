@@ -9,6 +9,8 @@ export interface EmailStyles {
   marginTop: number;
   marginSides: number;
   marginBottom: number;
+  headingWeight: number;
+  bodyWeight: number;
 }
 
 export const defaultEmailStyles: EmailStyles = {
@@ -22,6 +24,8 @@ export const defaultEmailStyles: EmailStyles = {
   marginTop: 20,
   marginSides: 20,
   marginBottom: 20,
+  headingWeight: 600,
+  bodyWeight: 400,
 };
 
 export const fontFamilyOptions = [

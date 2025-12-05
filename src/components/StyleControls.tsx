@@ -75,6 +75,40 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         />
       </div>
 
+      {/* Heading Weight */}
+      <div className="control-group">
+        <label className="control-label">
+          Heading Weight
+          <span className="range-value">{styles.headingWeight}</span>
+        </label>
+        <input
+          type="range"
+          className="control-input control-range"
+          min={100}
+          max={900}
+          step={100}
+          value={styles.headingWeight}
+          onChange={(e) => onStyleChange("headingWeight", Number(e.target.value))}
+        />
+      </div>
+
+      {/* Body Weight */}
+      <div className="control-group">
+        <label className="control-label">
+          Body Weight
+          <span className="range-value">{styles.bodyWeight}</span>
+        </label>
+        <input
+          type="range"
+          className="control-input control-range"
+          min={100}
+          max={900}
+          step={100}
+          value={styles.bodyWeight}
+          onChange={(e) => onStyleChange("bodyWeight", Number(e.target.value))}
+        />
+      </div>
+
       {/* Text Color */}
       <div className="control-group">
         <label className="control-label">Text Color</label>
