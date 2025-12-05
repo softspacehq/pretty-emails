@@ -6,14 +6,14 @@
 
 :root {
 	/* Core colors - matching viewer theme */
-	--background: rgb(18, 18, 18);
+	--background: rgb(24, 24, 24);
 	--foreground: rgb(220, 220, 220);
 	--border: rgba(255, 255, 255, 0.08);
 	--muted-foreground: rgb(132, 132, 132);
 	--background-editable: rgb(0, 0, 0);
 
 	/* App-specific */
-	--bg-secondary: #161616;
+	--bg-secondary: rgb(18, 18, 18);
 	--accent: rgba(255, 255, 255, 0.9);
 	--accent-hover: rgba(255, 255, 255, 1);
 
@@ -111,7 +111,7 @@ body {
 .app {
 	display: grid;
 	grid-template-columns: 1fr minmax(240px, 0.5fr) 1.2fr;
-	height: calc(100vh - 36px);
+	height: calc(100vh -24px);
 	gap: 1px;
 	background-color: var(--border);
 }
@@ -576,6 +576,10 @@ body {
 	.app-footer {
 		top: 0;
 		bottom: auto;
+	}
+
+	.footer-center {
+		display: none;
 	}
 
 	.app {
