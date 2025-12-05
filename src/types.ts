@@ -18,7 +18,7 @@ export const defaultEmailStyles: EmailStyles = {
   fontSize: 16,
   maxWidth: 560,
   lineHeight: 1.5,
-  textColor: '#1a1a1a',
+  textColor: '#000000',
   backgroundColor: '#ffffff',
   paragraphSpacing: 18,
   marginTop: 20,

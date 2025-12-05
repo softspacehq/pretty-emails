@@ -109,46 +109,6 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         />
       </div>
 
-      {/* Text Color */}
-      <div className="control-group">
-        <label className="control-label">Text Color</label>
-        <div className="color-input-wrapper">
-          <div className="color-swatch">
-            <input
-              type="color"
-              value={styles.textColor}
-              onChange={(e) => onStyleChange("textColor", e.target.value)}
-            />
-          </div>
-          <input
-            type="text"
-            className="control-input color-hex-input"
-            value={styles.textColor}
-            onChange={(e) => onStyleChange("textColor", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Background Color */}
-      <div className="control-group">
-        <label className="control-label">Background</label>
-        <div className="color-input-wrapper">
-          <div className="color-swatch">
-            <input
-              type="color"
-              value={styles.backgroundColor}
-              onChange={(e) => onStyleChange("backgroundColor", e.target.value)}
-            />
-          </div>
-          <input
-            type="text"
-            className="control-input color-hex-input"
-            value={styles.backgroundColor}
-            onChange={(e) => onStyleChange("backgroundColor", e.target.value)}
-          />
-        </div>
-      </div>
-
       {/* Paragraph Spacing */}
       <div className="control-group">
         <label className="control-label">
