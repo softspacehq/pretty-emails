@@ -26,6 +26,7 @@ function App() {
   const [markdown, setMarkdown] = useState("");
   const [styles, setStyles] = useState<EmailStyles>(loadStyles);
   const [copied, setCopied] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
 
   // Persist styles to localStorage
   useEffect(() => {
@@ -42,6 +43,12 @@ function App() {
     },
     []
   );
+
+  const handleClear = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEYS.content);
+    setMarkdown("");
+    setEditorKey((k) => k + 1); // Force editor remount
+  }, []);
 
   const handleCopy = useCallback(async () => {
     const html = renderEmailHtml(markdown, styles);
@@ -71,9 +78,12 @@ function App() {
       <div className="pane editor-pane">
         <div className="pane-header">
           <h2>Compose</h2>
+          <button className="clear-button" onClick={handleClear}>
+            Clear
+          </button>
         </div>
         <div className="pane-content">
-          <Editor onContentChange={setMarkdown} />
+          <Editor key={editorKey} onContentChange={setMarkdown} />
         </div>
       </div>
 
