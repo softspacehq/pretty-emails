@@ -20,7 +20,7 @@ function loadContent(): Block[] | undefined {
 }
 
 interface EditorProps {
-  onContentChange: (markdown: string) => void;
+  onContentChange: (markdown: string, html: string) => void;
 }
 
 export default function Editor({ onContentChange }: EditorProps) {
@@ -33,12 +33,14 @@ export default function Editor({ onContentChange }: EditorProps) {
   // Sync initial content to preview on mount
   useEffect(() => {
     const markdown = editor.blocksToMarkdownLossy();
-    onContentChange(markdown);
+    const html = editor.blocksToHTMLLossy();
+    onContentChange(markdown, html);
   }, [editor, onContentChange]);
 
   const handleChange = useCallback(() => {
     const markdown = editor.blocksToMarkdownLossy();
-    onContentChange(markdown);
+    const html = editor.blocksToHTMLLossy();
+    onContentChange(markdown, html);
     
     // Persist blocks to localStorage
     try {

@@ -24,6 +24,7 @@ function loadStyles(): EmailStyles {
 
 function App() {
   const [markdown, setMarkdown] = useState("");
+  const [htmlContent, setHtmlContent] = useState("");
   const [styles, setStyles] = useState<EmailStyles>(loadStyles);
   const [copied, setCopied] = useState(false);
   const [editorKey, setEditorKey] = useState(0);
@@ -47,11 +48,12 @@ function App() {
   const handleClear = useCallback(() => {
     localStorage.removeItem(STORAGE_KEYS.content);
     setMarkdown("");
+    setHtmlContent("");
     setEditorKey((k) => k + 1); // Force editor remount
   }, []);
 
   const handleCopy = useCallback(async () => {
-    const html = renderEmailHtml(markdown, styles);
+    const html = renderEmailHtml(markdown, styles, htmlContent);
     
     try {
       // Copy as both HTML and plain text for maximum compatibility
@@ -83,7 +85,13 @@ function App() {
           </button>
         </div>
         <div className="pane-content">
-          <Editor key={editorKey} onContentChange={setMarkdown} />
+          <Editor
+            key={editorKey}
+            onContentChange={(md, html) => {
+              setMarkdown(md);
+              setHtmlContent(html);
+            }}
+          />
         </div>
       </div>
 
@@ -110,7 +118,7 @@ function App() {
         </div>
         <div className="pane-content">
           <div className="email-preview-container">
-            <EmailPreview markdown={markdown} styles={styles} />
+            <EmailPreview markdown={markdown} html={htmlContent} styles={styles} />
           </div>
         </div>
       </div>

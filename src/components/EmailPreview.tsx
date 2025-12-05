@@ -4,15 +4,16 @@ import { renderEmailBodyHtml } from "../utils/emailRenderer";
 
 interface EmailPreviewProps {
   markdown: string;
+  html?: string;
   styles: EmailStyles;
 }
 
-export default function EmailPreview({ markdown, styles }: EmailPreviewProps) {
+export default function EmailPreview({ markdown, html, styles }: EmailPreviewProps) {
   const { fontFamily, fontSize, lineHeight, maxWidth, textColor, backgroundColor, marginTop, marginSides, marginBottom } = styles;
 
   const bodyHtml = useMemo(() => {
-    return renderEmailBodyHtml(markdown, styles);
-  }, [markdown, styles]);
+    return renderEmailBodyHtml(markdown, styles, html);
+  }, [markdown, styles, html]);
 
   const containerStyle: React.CSSProperties = {
     backgroundColor,
