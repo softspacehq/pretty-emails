@@ -20,6 +20,8 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		bodyWeight,
 	} = styles;
 
+	const imageCornerRadius = styles.imageCornerRadius;
+
 	// Convert markdown to HTML elements
 	const bodyContent = markdownToEmailHtml(markdown, {
 		textColor,
@@ -29,6 +31,7 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		maxWidth,
 		headingWeight,
 		bodyWeight,
+		imageCornerRadius,
 	});
 
 	return `<!DOCTYPE html>
@@ -75,13 +78,14 @@ interface ContentStyles {
 	maxWidth: number;
 	headingWeight: number;
 	bodyWeight: number;
+	imageCornerRadius: number;
 }
 
 /**
  * Converts markdown to inline-styled HTML for email clients.
  */
 function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight } = styles;
+	const { textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
 
 	// Base style applied to all text elements for Gmail compatibility
 	const baseTextStyle = `font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${bodyWeight};`;
@@ -97,13 +101,25 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 	let inList = false;
 	let listItems: string[] = [];
 	let listType: "ul" | "ol" = "ul";
+	let olStartNumber = 1;
+	let blockquoteLines: string[] = [];
+
+	const flushBlockquote = () => {
+		if (blockquoteLines.length > 0) {
+			const blockquoteStyle = `margin: 0 0 ${paragraphSpacing}px 0; padding: 0 16px; border-left: 4px solid ${textColor}; opacity: 0.85; ${baseTextStyle}`;
+			const content = blockquoteLines.map(line => processInlineFormatting(line)).join('<br>');
+			htmlParts.push(`\t\t\t\t\t\t\t\t<blockquote style="${blockquoteStyle}">${content}</blockquote>`);
+			blockquoteLines = [];
+		}
+	};
 
 	const flushList = () => {
 		if (listItems.length > 0) {
 			const listStyle = `margin: 0 0 ${paragraphSpacing}px 0; padding-left: 24px; ${baseTextStyle}`;
 
 			const tag = listType;
-			htmlParts.push(`\t\t\t\t\t\t\t\t<${tag} style="${listStyle}">`);
+			const startAttr = tag === "ol" ? ` start="${olStartNumber}"` : "";
+			htmlParts.push(`\t\t\t\t\t\t\t\t<${tag}${startAttr} style="${listStyle}">`);
 			listItems.forEach(item => {
 				htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: 10px; ${baseTextStyle}">${item}</li>`);
 			});
@@ -118,8 +134,9 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		const trimmedLine = line.trim();
 
 		// Skip empty lines and lines that are just backslashes
+		// Don't flush lists on empty lines - BlockNote adds empty lines between list items
 		if (trimmedLine === "" || trimmedLine === "\\" || trimmedLine === "\\\\") {
-			flushList();
+			flushBlockquote();
 			continue;
 		}
 
@@ -130,6 +147,7 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 		if (h1Match) {
 			flushList();
+			flushBlockquote();
 			const content = processInlineFormatting(h1Match[1], true);
 			htmlParts.push(`\t\t\t\t\t\t\t\t<h1 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.75)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h1>`);
 			continue;
@@ -137,6 +155,7 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 		if (h2Match) {
 			flushList();
+			flushBlockquote();
 			const content = processInlineFormatting(h2Match[1], true);
 			htmlParts.push(`\t\t\t\t\t\t\t\t<h2 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.5)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h2>`);
 			continue;
@@ -144,14 +163,24 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 
 		if (h3Match) {
 			flushList();
+			flushBlockquote();
 			const content = processInlineFormatting(h3Match[1], true);
 			htmlParts.push(`\t\t\t\t\t\t\t\t<h3 style="margin: 0 0 ${paragraphSpacing}px 0; font-size: ${Math.round(fontSize * 1.2)}px; line-height: ${lineHeight * 0.9}; font-weight: ${headingWeight};">${content}</h3>`);
+			continue;
+		}
+
+		// Check for blockquote
+		const blockquoteMatch = trimmedLine.match(/^> ?(.*)$/);
+		if (blockquoteMatch) {
+			flushList();
+			blockquoteLines.push(blockquoteMatch[1]);
 			continue;
 		}
 
 		// Check for unordered list items
 		const ulMatch = trimmedLine.match(/^[-*+] (.+)$/);
 		if (ulMatch) {
+			flushBlockquote();
 			if (!inList || listType !== "ul") {
 				flushList();
 				inList = true;
@@ -162,20 +191,24 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		}
 
 		// Check for ordered list items
-		const olMatch = trimmedLine.match(/^\d+\. (.+)$/);
+		const olMatch = trimmedLine.match(/^(\d+)\. (.+)$/);
 		if (olMatch) {
+			flushBlockquote();
+			const itemNumber = parseInt(olMatch[1], 10);
 			if (!inList || listType !== "ol") {
 				flushList();
 				inList = true;
 				listType = "ol";
+				olStartNumber = itemNumber;
 			}
-			listItems.push(processInlineFormatting(olMatch[1]));
+			listItems.push(processInlineFormatting(olMatch[2]));
 			continue;
 		}
 
 		// Check for horizontal rule
 		if (trimmedLine.match(/^[-*_]{3,}$/)) {
 			flushList();
+			flushBlockquote();
 			htmlParts.push(`\t\t\t\t\t\t\t\t<hr style="border: none; border-top: 1px solid ${textColor}; margin: ${paragraphSpacing}px 0; opacity: 0.3;">`);
 			continue;
 		}
@@ -184,19 +217,22 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 		const imageMatch = trimmedLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
 		if (imageMatch) {
 			flushList();
+			flushBlockquote();
 			const alt = imageMatch[1] || '';
 			const src = imageMatch[2];
-			htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; display: block; border-radius: 4px;"></p>`);
+			htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; display: block; border-radius: ${imageCornerRadius}px;"></p>`);
 			continue;
 		}
 
 		// Regular paragraph
 		flushList();
+		flushBlockquote();
 		const content = processInlineFormatting(trimmedLine);
 		htmlParts.push(`\t\t\t\t\t\t\t\t<p style="margin: 0 0 ${paragraphSpacing}px 0; ${baseTextStyle}">${content}</p>`);
 	}
 
 	flushList();
+	flushBlockquote();
 
 	// Remove margin from last element
 	if (htmlParts.length > 0) {
@@ -259,7 +295,7 @@ function processInlineFormatting(text: string, stripBold = false): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth, headingWeight, bodyWeight } = styles;
+	const { textColor, fontSize, lineHeight, paragraphSpacing, maxWidth, headingWeight, bodyWeight, imageCornerRadius } = styles;
 
 	return markdownToEmailHtml(markdown, {
 		textColor,
@@ -269,6 +305,7 @@ export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): stri
 		maxWidth,
 		headingWeight,
 		bodyWeight,
+		imageCornerRadius,
 	});
 }
 
