@@ -82,7 +82,7 @@ function App() {
 		<>
 			<footer className="app-banner">
 				<span className="banner-left">PRETTY EMAILS</span>
-				<span className="banner-center">Data is local & private</span>
+				<span className="banner-center">Data stays local & private</span>
 				<span className="banner-right">
 					WITH ❤️ FROM{" "}
 					<a href="https://www.soft.space" target="_blank" rel="noopener noreferrer">

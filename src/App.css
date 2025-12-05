@@ -135,7 +135,7 @@ body {
 	height: 44px;
 	min-height: 44px;
 	max-height: 44px;
-	background-color: rgba(24, 24, 24, 0.8);
+	background-color: color-mix(in srgb, var(--background) 60%, transparent);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 }
@@ -181,7 +181,7 @@ body {
 }
 
 .controls-pane .pane-header {
-	background-color: rgba(18, 18, 18, 0.8);
+	background-color: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
 }
 
 .controls-pane .pane-content {
@@ -618,13 +618,13 @@ body {
 		position: sticky;
 		top: var(--banner-height);
 		z-index: 100;
-		background-color: rgba(24, 24, 24, 0.8);
+		background-color: color-mix(in srgb, var(--background) 60%, transparent);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.controls-pane .pane-header {
-		background-color: rgba(18, 18, 18, 0.8);
+		background-color: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
 	}
