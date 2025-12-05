@@ -271,7 +271,7 @@ body {
 }
 
 .bn-editor {
-  padding: 14px 18px;
+  padding: 24px 32px;
   min-height: 100%;
   background-color: var(--background) !important;
 }
