@@ -11,22 +11,7 @@ interface EditorProps {
 export default function Editor({ onContentChange }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const editor = useCreateBlockNote({
-    initialContent: [
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: "Hey [Name]," }],
-      },
-      {
-        type: "paragraph",
-        content: [],
-      },
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: "Start writing your email here..." }],
-      },
-    ],
-  });
+  const editor = useCreateBlockNote();
 
   // Sync initial content to preview on mount
   useEffect(() => {
