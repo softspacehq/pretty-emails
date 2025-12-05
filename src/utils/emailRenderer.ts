@@ -120,8 +120,9 @@ function markdownToEmailHtml(markdown: string, styles: ContentStyles): string {
 			const tag = listType;
 			const startAttr = tag === "ol" ? ` start="${olStartNumber}"` : "";
 			htmlParts.push(`\t\t\t\t\t\t\t\t<${tag}${startAttr} style="${listStyle}">`);
+			const listItemSpacing = Math.round(paragraphSpacing / 2);
 			listItems.forEach(item => {
-				htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: 10px; ${baseTextStyle}">${item}</li>`);
+				htmlParts.push(`\t\t\t\t\t\t\t\t\t<li style="margin-bottom: ${listItemSpacing}px; ${baseTextStyle}">${item}</li>`);
 			});
 			htmlParts.push(`\t\t\t\t\t\t\t\t</${tag}>`);
 			listItems = [];

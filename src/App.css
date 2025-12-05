@@ -70,10 +70,11 @@ body {
 }
 
 .pane-header h2 {
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
+	/* font-stretch: expanded; */
 	color: var(--muted-foreground);
 }
 
