@@ -52,7 +52,7 @@ export default function Editor({ onContentChange }: EditorProps) {
   const handleContainerClick = useCallback((e: React.MouseEvent) => {
     // Only focus if clicking on the container itself, not on the editor
     if (e.target === containerRef.current) {
-      editor.focus("end");
+      editor.focus();
     }
   }, [editor]);
 
