@@ -26,7 +26,10 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
 
       {/* Font Size */}
       <div className="control-group">
-        <label className="control-label">Font Size</label>
+        <label className="control-label">
+          Font Size
+          <span className="range-value">{styles.fontSize}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -36,12 +39,14 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.fontSize}
           onChange={(e) => onStyleChange("fontSize", Number(e.target.value))}
         />
-        <div className="range-value">{styles.fontSize}px</div>
       </div>
 
       {/* Max Width */}
       <div className="control-group">
-        <label className="control-label">Max Width</label>
+        <label className="control-label">
+          Max Width
+          <span className="range-value">{styles.maxWidth}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -51,12 +56,14 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.maxWidth}
           onChange={(e) => onStyleChange("maxWidth", Number(e.target.value))}
         />
-        <div className="range-value">{styles.maxWidth}px</div>
       </div>
 
       {/* Line Height */}
       <div className="control-group">
-        <label className="control-label">Line Height</label>
+        <label className="control-label">
+          Line Height
+          <span className="range-value">{styles.lineHeight.toFixed(1)}</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -66,7 +73,6 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.lineHeight}
           onChange={(e) => onStyleChange("lineHeight", Number(e.target.value))}
         />
-        <div className="range-value">{styles.lineHeight.toFixed(1)}</div>
       </div>
 
       {/* Text Color */}
@@ -111,7 +117,10 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
 
       {/* Paragraph Spacing */}
       <div className="control-group">
-        <label className="control-label">Paragraph Spacing</label>
+        <label className="control-label">
+          Paragraph Spacing
+          <span className="range-value">{styles.paragraphSpacing}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -121,12 +130,14 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.paragraphSpacing}
           onChange={(e) => onStyleChange("paragraphSpacing", Number(e.target.value))}
         />
-        <div className="range-value">{styles.paragraphSpacing}px</div>
       </div>
 
       {/* Top Margin */}
       <div className="control-group">
-        <label className="control-label">Top Margin</label>
+        <label className="control-label">
+          Top Margin
+          <span className="range-value">{styles.marginTop}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -136,12 +147,14 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.marginTop}
           onChange={(e) => onStyleChange("marginTop", Number(e.target.value))}
         />
-        <div className="range-value">{styles.marginTop}px</div>
       </div>
 
       {/* Sides Margin */}
       <div className="control-group">
-        <label className="control-label">Sides Margin</label>
+        <label className="control-label">
+          Sides Margin
+          <span className="range-value">{styles.marginSides}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -151,12 +164,14 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.marginSides}
           onChange={(e) => onStyleChange("marginSides", Number(e.target.value))}
         />
-        <div className="range-value">{styles.marginSides}px</div>
       </div>
 
       {/* Bottom Margin */}
       <div className="control-group">
-        <label className="control-label">Bottom Margin</label>
+        <label className="control-label">
+          Bottom Margin
+          <span className="range-value">{styles.marginBottom}px</span>
+        </label>
         <input
           type="range"
           className="control-input control-range"
@@ -166,7 +181,6 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
           value={styles.marginBottom}
           onChange={(e) => onStyleChange("marginBottom", Number(e.target.value))}
         />
-        <div className="range-value">{styles.marginBottom}px</div>
       </div>
     </>
   );
