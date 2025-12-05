@@ -43,6 +43,17 @@ body {
 	color: var(--foreground);
 }
 
+/* Selected text - inverted palette */
+::selection {
+	background-color: var(--foreground);
+	color: var(--background);
+}
+
+::-moz-selection {
+	background-color: var(--foreground);
+	color: var(--background);
+}
+
 .app {
 	display: grid;
 	grid-template-columns: 1fr 380px 1.2fr;
@@ -327,7 +338,8 @@ body {
 
 /* Links */
 .bn-container a {
-	color: var(--link-color) !important;
+	color: var(--foreground) !important;
+	text-decoration: underline;
 	font-weight: 500;
 }
 
