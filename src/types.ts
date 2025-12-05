@@ -6,6 +6,9 @@ export interface EmailStyles {
   textColor: string;
   backgroundColor: string;
   paragraphSpacing: number;
+  marginTop: number;
+  marginSides: number;
+  marginBottom: number;
 }
 
 export const defaultEmailStyles: EmailStyles = {
@@ -16,6 +19,9 @@ export const defaultEmailStyles: EmailStyles = {
   textColor: '#1a1a1a',
   backgroundColor: '#ffffff',
   paragraphSpacing: 18,
+  marginTop: 20,
+  marginSides: 20,
+  marginBottom: 20,
 };
 
 export const fontFamilyOptions = [

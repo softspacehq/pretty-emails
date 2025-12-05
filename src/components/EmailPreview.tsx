@@ -8,7 +8,7 @@ interface EmailPreviewProps {
 }
 
 export default function EmailPreview({ markdown, styles }: EmailPreviewProps) {
-  const { fontFamily, fontSize, lineHeight, maxWidth, textColor, backgroundColor } = styles;
+  const { fontFamily, fontSize, lineHeight, maxWidth, textColor, backgroundColor, marginTop, marginSides, marginBottom } = styles;
 
   const bodyHtml = useMemo(() => {
     return renderEmailBodyHtml(markdown, styles);
@@ -16,7 +16,7 @@ export default function EmailPreview({ markdown, styles }: EmailPreviewProps) {
 
   const containerStyle: React.CSSProperties = {
     backgroundColor,
-    padding: "20px",
+    padding: `${marginTop}px ${marginSides}px ${marginBottom}px ${marginSides}px`,
     minHeight: "100%",
   };
 

@@ -13,6 +13,9 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
     textColor,
     backgroundColor,
     paragraphSpacing,
+    marginTop,
+    marginSides,
+    marginBottom,
   } = styles;
 
   // Convert markdown to HTML elements
@@ -35,7 +38,7 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 <body style="margin: 0; padding: 0; background-color: ${backgroundColor};">
 \t<table width="100%" cellpadding="0" cellspacing="0" border="0">
 \t\t<tr>
-\t\t\t<td align="center" style="padding: 20px;">
+\t\t\t<td align="center" style="padding: ${marginTop}px ${marginSides}px ${marginBottom}px ${marginSides}px;">
 \t\t\t\t<!--[if mso]>
 \t\t\t\t<table width="${maxWidth}" cellpadding="0" cellspacing="0" border="0"><tr><td>
 \t\t\t\t<![endif]-->

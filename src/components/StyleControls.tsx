@@ -123,6 +123,51 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
         />
         <div className="range-value">{styles.paragraphSpacing}px</div>
       </div>
+
+      {/* Top Margin */}
+      <div className="control-group">
+        <label className="control-label">Top Margin</label>
+        <input
+          type="range"
+          className="control-input control-range"
+          min={0}
+          max={60}
+          step={4}
+          value={styles.marginTop}
+          onChange={(e) => onStyleChange("marginTop", Number(e.target.value))}
+        />
+        <div className="range-value">{styles.marginTop}px</div>
+      </div>
+
+      {/* Sides Margin */}
+      <div className="control-group">
+        <label className="control-label">Sides Margin</label>
+        <input
+          type="range"
+          className="control-input control-range"
+          min={0}
+          max={60}
+          step={4}
+          value={styles.marginSides}
+          onChange={(e) => onStyleChange("marginSides", Number(e.target.value))}
+        />
+        <div className="range-value">{styles.marginSides}px</div>
+      </div>
+
+      {/* Bottom Margin */}
+      <div className="control-group">
+        <label className="control-label">Bottom Margin</label>
+        <input
+          type="range"
+          className="control-input control-range"
+          min={0}
+          max={60}
+          step={4}
+          value={styles.marginBottom}
+          onChange={(e) => onStyleChange("marginBottom", Number(e.target.value))}
+        />
+        <div className="range-value">{styles.marginBottom}px</div>
+      </div>
     </>
   );
 }
