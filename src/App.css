@@ -7,9 +7,9 @@
 :root {
 	/* Core colors - matching viewer theme */
 	--background: rgb(24, 24, 24);
-	--foreground: rgb(220, 220, 220);
+	--foreground: rgb(255, 255, 255);
 	--border: rgba(255, 255, 255, 0.08);
-	--muted-foreground: rgb(132, 132, 132);
+	--muted-foreground: rgb(146, 146, 146);
 	--background-editable: rgb(0, 0, 0);
 
 	/* App-specific */
@@ -132,6 +132,9 @@ body {
 	height: 44px;
 	min-height: 44px;
 	max-height: 44px;
+	background-color: rgba(24, 24, 24, 0.8);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 .pane-header h2 {
@@ -172,6 +175,10 @@ body {
 /* Controls Pane */
 .controls-pane {
 	background-color: var(--bg-secondary);
+}
+
+.controls-pane .pane-header {
+	background-color: rgba(18, 18, 18, 0.8);
 }
 
 .controls-pane .pane-content {
@@ -320,13 +327,15 @@ body {
 	padding: 4px 8px;
 	background-color: transparent;
 	color: var(--foreground);
-	border: 1px solid var(--muted-foreground);
+	border: 1px solid var(--foreground);
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
+	font-stretch: semi-expanded;
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.15s ease;
+	opacity: 0.8;
 }
 
 .clear-button {
@@ -337,6 +346,7 @@ body {
 	border-radius: 4px;
 	font-family: var(--font-sans);
 	font-size: 12px;
+	font-stretch: semi-expanded;
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.15s ease;
@@ -345,6 +355,7 @@ body {
 .copy-button:hover {
 	border-color: var(--foreground);
 	color: var(--foreground);
+	opacity: 1.0;
 }
 
 .clear-button:hover {
@@ -605,11 +616,15 @@ body {
 		position: sticky;
 		top: 24px;
 		z-index: 100;
-		background-color: var(--background);
+		background-color: rgba(24, 24, 24, 0.8);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.controls-pane .pane-header {
-		background-color: var(--bg-secondary);
+		background-color: rgba(18, 18, 18, 0.8);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.editor-pane,

@@ -94,7 +94,7 @@ function App() {
 				{/* Left Pane: Editor */}
 				<div className="pane editor-pane">
 					<div className="pane-header">
-						<h2>Compose</h2>
+						<h2>1. Compose</h2>
 						<button className="clear-button" onClick={handleClear}>
 							Clear
 						</button>
@@ -107,7 +107,7 @@ function App() {
 				{/* Middle Pane: Style Controls */}
 				<div className="pane controls-pane">
 					<div className="pane-header">
-						<h2>Style</h2>
+						<h2>2. Style</h2>
 					</div>
 					<div className="pane-content">
 						<StyleControls styles={styles} onStyleChange={handleStyleChange} />
@@ -117,12 +117,12 @@ function App() {
 				{/* Right Pane: Preview */}
 				<div className="pane preview-pane">
 					<div className="pane-header">
-						<h2>Preview</h2>
+						<h2>3. Preview</h2>
 						<button
 							className={`copy-button ${copied ? "copied" : ""}`}
 							onClick={handleCopy}
 						>
-							{copied ? "Ready to paste" : "Copy for Gmail"}
+							{copied ? "Ready to paste" : "4. Copy for Gmail"}
 						</button>
 					</div>
 					<div className="pane-content">
