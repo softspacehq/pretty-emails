@@ -110,6 +110,9 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 	let blockquoteLines: string[] = [];
 	let inCodeFence = false;
 	let codeLines: string[] = [];
+	let inTable = false;
+	let tableRows: string[][] = [];
+	let hasTableHeader = false;
 
 	const flushBlockquote = () => {
 		if (blockquoteLines.length > 0) {
@@ -134,6 +137,35 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			const codeStyle = `font-family:monospace;font-size:${Math.round(fontSize * 0.9)}px;line-height:1.5;color:${rgbColor};white-space:pre-wrap;word-break:break-word`;
 			htmlParts.push(`<pre style="${preStyle}"><code style="${codeStyle}">${escapedCode}</code></pre>`);
 			codeLines = [];
+		}
+	};
+
+	const flushTable = () => {
+		if (tableRows.length > 0) {
+			const tableStyle = `margin:0 0 ${paragraphSpacing}px;border-collapse:collapse;width:100%;${baseStyle}`;
+			const thStyle = `padding:8px 12px;border:1px solid rgba(0,0,0,0.15);text-align:left;font-weight:${headingWeight};background-color:rgba(0,0,0,0.03)`;
+			const tdStyle = `padding:8px 12px;border:1px solid rgba(0,0,0,0.15);text-align:left`;
+
+			let tableHtml = `<table style="${tableStyle}">`;
+
+			tableRows.forEach((row, rowIndex) => {
+				const isHeader = hasTableHeader && rowIndex === 0;
+				const tag = isHeader ? 'th' : 'td';
+				const cellStyle = isHeader ? thStyle : tdStyle;
+
+				tableHtml += '<tr>';
+				row.forEach(cell => {
+					const content = processInlineFormatting(cell.trim());
+					tableHtml += `<${tag} style="${cellStyle}">${content}</${tag}>`;
+				});
+				tableHtml += '</tr>';
+			});
+
+			tableHtml += '</table>';
+			htmlParts.push(tableHtml);
+			tableRows = [];
+			inTable = false;
+			hasTableHeader = false;
 		}
 	};
 
@@ -180,10 +212,47 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			continue;
 		}
 
-		// Skip empty lines and lines that are just backslashes
+		// Skip empty lines and lines that are just backslashes (but not if in table - handle below)
 		if (trimmedLine === "" || trimmedLine === "\\" || trimmedLine === "\\\\") {
+			// If in a table, allow empty lines without breaking
+			if (inTable) {
+				continue;
+			}
 			flushBlockquote();
 			continue;
+		}
+
+		// Check for table rows: | cell | cell | or |cell|cell|
+		const tableRowMatch = trimmedLine.match(/^\|(.+)\|$/);
+		if (tableRowMatch) {
+			// Check if this is a separator row (|---|---|) - contains only |, -, :, and spaces
+			const isSeparator = /^\|[-:\s|]+\|$/.test(trimmedLine) && trimmedLine.includes('-');
+
+			if (isSeparator) {
+				// Separator row indicates previous row was header
+				if (tableRows.length === 1) {
+					hasTableHeader = true;
+				}
+				// Skip the separator row itself
+				continue;
+			}
+
+			// Start table if not already in one
+			if (!inTable) {
+				flushList();
+				flushBlockquote();
+				inTable = true;
+			}
+
+			// Parse cells (split by | but handle escaped pipes)
+			const cells = tableRowMatch[1].split('|').map(cell => cell.trim());
+			tableRows.push(cells);
+			continue;
+		}
+
+		// If we were in a table but hit a non-table line, flush the table
+		if (inTable) {
+			flushTable();
 		}
 
 		// Check for headers
@@ -295,6 +364,7 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 	flushList();
 	flushBlockquote();
 	flushCodeFence();
+	flushTable();
 
 	return htmlParts;
 }
@@ -332,7 +402,7 @@ function processInlineFormatting(text: string, stripBold = false): string {
 	// Inline code: `code`
 	result = result.replace(
 		/`(.+?)`/g,
-		'<code style="background-color:rgba(0,0,0,0.05);padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>'
+		'<code style="background-color:rgba(0,0,0,0.05);padding:2px 6px;border-radius:3px;font-family:monospace;font-size:0.9em">$1</code>'
 	);
 
 	// Inline images: ![alt](url) - must be before links since syntax is similar
