@@ -108,6 +108,8 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 	let listType: "ul" | "ol" = "ul";
 	let olStartNumber = 1;
 	let blockquoteLines: string[] = [];
+	let inCodeFence = false;
+	let codeLines: string[] = [];
 
 	const flushBlockquote = () => {
 		if (blockquoteLines.length > 0) {
@@ -115,6 +117,23 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			const content = blockquoteLines.map(line => processInlineFormatting(line)).join('<br>');
 			htmlParts.push(`<blockquote style="${blockquoteStyle}">${content}</blockquote>`);
 			blockquoteLines = [];
+		}
+	};
+
+	const flushCodeFence = () => {
+		if (codeLines.length > 0) {
+			// Escape HTML in code content
+			const escapedCode = codeLines
+				.map(line => line
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+				)
+				.join('\n');
+			const preStyle = `margin:0 0 ${paragraphSpacing}px;padding:12px 16px;background-color:rgba(0,0,0,0.05);border-radius:6px;overflow-x:auto`;
+			const codeStyle = `font-family:monospace;font-size:${Math.round(fontSize * 0.9)}px;line-height:1.5;color:${rgbColor};white-space:pre-wrap;word-break:break-word`;
+			htmlParts.push(`<pre style="${preStyle}"><code style="${codeStyle}">${escapedCode}</code></pre>`);
+			codeLines = [];
 		}
 	};
 
@@ -139,6 +158,27 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 	for (let i = 0; i < lines.length; i++) {
 		const line = lines[i];
 		const trimmedLine = line.trim();
+
+		// Check for code fence markers (``` or ```language)
+		if (trimmedLine.startsWith("```")) {
+			if (inCodeFence) {
+				// Closing fence
+				flushCodeFence();
+				inCodeFence = false;
+			} else {
+				// Opening fence - flush other elements first
+				flushList();
+				flushBlockquote();
+				inCodeFence = true;
+			}
+			continue;
+		}
+
+		// If inside code fence, collect lines without processing
+		if (inCodeFence) {
+			codeLines.push(line);
+			continue;
+		}
 
 		// Skip empty lines and lines that are just backslashes
 		if (trimmedLine === "" || trimmedLine === "\\" || trimmedLine === "\\\\") {
@@ -254,6 +294,7 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 
 	flushList();
 	flushBlockquote();
+	flushCodeFence();
 
 	return htmlParts;
 }
