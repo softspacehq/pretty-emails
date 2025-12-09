@@ -12,6 +12,7 @@ export interface EmailStyles {
 	headingWeight: number;
 	bodyWeight: number;
 	imageCornerRadius: number;
+	headingTopMargin: number;
 }
 
 export const defaultEmailStyles: EmailStyles = {
@@ -28,6 +29,7 @@ export const defaultEmailStyles: EmailStyles = {
 	headingWeight: 600,
 	bodyWeight: 400,
 	imageCornerRadius: 4,
+	headingTopMargin: 1,
 };
 
 export const fontFamilyOptions = [

@@ -188,8 +188,27 @@ body {
 	padding: 20px;
 }
 
+.control-section {
+	margin-bottom: 28px;
+}
+
+.control-section:last-child {
+	margin-bottom: 0;
+}
+
+.control-section-title {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--foreground);
+	margin-bottom: 16px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--border);
+}
+
 .control-group {
-	margin-bottom: 24px;
+	margin-bottom: 20px;
 }
 
 .control-group:last-child {
@@ -631,15 +650,15 @@ body {
 
 	.controls-pane .pane-content {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 16px;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
 	}
 
-	.control-group {
+	.control-section {
 		margin-bottom: 0;
 	}
 
-	.controls-pane .pane-content {
-		grid-template-columns: repeat(2, 1fr);
+	.control-group {
+		margin-bottom: 16px;
 	}
 }

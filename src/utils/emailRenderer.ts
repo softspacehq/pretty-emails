@@ -36,6 +36,7 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		headingWeight,
 		bodyWeight,
 		imageCornerRadius,
+		headingTopMargin,
 	} = styles;
 
 	// Format styles to match browser serialization (no spaces, rgb colors, escaped quotes)
@@ -53,13 +54,14 @@ export function renderEmailHtml(markdown: string, styles: EmailStyles): string {
 		headingWeight,
 		bodyWeight,
 		imageCornerRadius,
+		headingTopMargin,
 	});
 
-	// Remove margin from last element
+	// Remove margin from last element (handles both px-only and rem+px formats)
 	if (htmlParts.length > 0) {
 		const lastIndex = htmlParts.length - 1;
 		htmlParts[lastIndex] = htmlParts[lastIndex].replace(
-			/margin:0 0 \d+px/,
+			/margin:[\d.]+(?:rem)? 0 \d+px/,
 			"margin:0"
 		);
 	}
@@ -86,6 +88,7 @@ interface FlatHtmlStyles {
 	headingWeight: number;
 	bodyWeight: number;
 	imageCornerRadius: number;
+	headingTopMargin: number;
 }
 
 /**
@@ -93,7 +96,7 @@ interface FlatHtmlStyles {
  * Produces simple structure similar to manual copy-paste for Gmail compatibility.
  */
 function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] {
-	const { baseStyle, rgbColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
+	const { baseStyle, rgbColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius, headingTopMargin } = styles;
 
 	// Clean up BlockNote's markdown export quirks
 	const cleanedMarkdown = markdown
@@ -264,7 +267,10 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h1Match[1], true);
-			const h1Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.75)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			const isFirst = htmlParts.length === 0;
+			const topMargin = isFirst ? 0 : headingTopMargin;
+			const bottomMargin = isFirst ? `${headingTopMargin}rem` : `${paragraphSpacing}px`;
+			const h1Style = `margin:${topMargin}rem 0 ${bottomMargin};padding:0;${baseStyle}font-size:${Math.round(fontSize * 2.25)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
 			htmlParts.push(`<h1 style="${h1Style}">${content}</h1>`);
 			continue;
 		}
@@ -273,7 +279,10 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h2Match[1], true);
-			const h2Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.5)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			const isFirst = htmlParts.length === 0;
+			const topMargin = isFirst ? 0 : headingTopMargin;
+			const bottomMargin = isFirst ? `${headingTopMargin}rem` : `${paragraphSpacing}px`;
+			const h2Style = `margin:${topMargin}rem 0 ${bottomMargin};padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.6)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
 			htmlParts.push(`<h2 style="${h2Style}">${content}</h2>`);
 			continue;
 		}
@@ -282,7 +291,10 @@ function markdownToFlatHtml(markdown: string, styles: FlatHtmlStyles): string[] 
 			flushList();
 			flushBlockquote();
 			const content = processInlineFormatting(h3Match[1], true);
-			const h3Style = `margin:0 0 ${paragraphSpacing}px;padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.2)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight}`;
+			const isFirst = htmlParts.length === 0;
+			const topMargin = isFirst ? 0 : headingTopMargin;
+			const bottomMargin = isFirst ? `${headingTopMargin}rem` : `${paragraphSpacing}px`;
+			const h3Style = `margin:${topMargin}rem 0 ${bottomMargin};padding:0;${baseStyle}font-size:${Math.round(fontSize * 1.2)}px;line-height:${lineHeight * 0.9};font-weight:${headingWeight};`;
 			htmlParts.push(`<h3 style="${h3Style}">${content}</h3>`);
 			continue;
 		}
@@ -424,7 +436,7 @@ function processInlineFormatting(text: string, stripBold = false): string {
  * Returns just the inner body content for preview rendering
  */
 export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): string {
-	const { fontFamily, textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius } = styles;
+	const { fontFamily, textColor, fontSize, lineHeight, paragraphSpacing, headingWeight, bodyWeight, imageCornerRadius, headingTopMargin } = styles;
 
 	const rgbColor = hexToRgb(textColor);
 	const escapedFontFamily = escapeFontFamily(fontFamily);
@@ -439,13 +451,14 @@ export function renderEmailBodyHtml(markdown: string, styles: EmailStyles): stri
 		headingWeight,
 		bodyWeight,
 		imageCornerRadius,
+		headingTopMargin,
 	});
 
-	// Remove margin from last element
+	// Remove margin from last element (handles both px-only and rem+px formats)
 	if (htmlParts.length > 0) {
 		const lastIndex = htmlParts.length - 1;
 		htmlParts[lastIndex] = htmlParts[lastIndex].replace(
-			/margin:0 0 \d+px/,
+			/margin:[\d.]+(?:rem)? 0 \d+px/,
 			"margin:0"
 		);
 	}
