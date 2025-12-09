@@ -8,74 +8,6 @@ interface StyleControlsProps {
 export default function StyleControls({ styles, onStyleChange }: StyleControlsProps) {
 	return (
 		<>
-			{/* Typography Section */}
-			<div className="control-section">
-				<div className="control-section-title">Typography</div>
-
-				<div className="control-group">
-					<label className="control-label">Font Family</label>
-					<select
-						className="control-input control-select"
-						value={styles.fontFamily}
-						onChange={(e) => onStyleChange("fontFamily", e.target.value)}
-					>
-						{fontFamilyOptions.map((opt) => (
-							<option key={opt.label} value={opt.value}>
-								{opt.label}
-							</option>
-						))}
-					</select>
-				</div>
-
-				<div className="control-group">
-					<label className="control-label">
-						Font Size
-						<span className="range-value">{styles.fontSize}px</span>
-					</label>
-					<input
-						type="range"
-						className="control-input control-range"
-						min={12}
-						max={24}
-						step={1}
-						value={styles.fontSize}
-						onChange={(e) => onStyleChange("fontSize", Number(e.target.value))}
-					/>
-				</div>
-
-				<div className="control-group">
-					<label className="control-label">
-						Body Weight
-						<span className="range-value">{styles.bodyWeight}</span>
-					</label>
-					<input
-						type="range"
-						className="control-input control-range"
-						min={100}
-						max={900}
-						step={20}
-						value={styles.bodyWeight}
-						onChange={(e) => onStyleChange("bodyWeight", Number(e.target.value))}
-					/>
-				</div>
-
-				<div className="control-group">
-					<label className="control-label">
-						Heading Weight
-						<span className="range-value">{styles.headingWeight}</span>
-					</label>
-					<input
-						type="range"
-						className="control-input control-range"
-						min={100}
-						max={900}
-						step={20}
-						value={styles.headingWeight}
-						onChange={(e) => onStyleChange("headingWeight", Number(e.target.value))}
-					/>
-				</div>
-			</div>
-
 			{/* Layout Section */}
 			<div className="control-section">
 				<div className="control-section-title">Layout</div>
@@ -162,7 +94,7 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
 
 				<div className="control-group">
 					<label className="control-label">
-						Paragraph Spacing
+						Block Spacing
 						<span className="range-value">{styles.paragraphSpacing}px</span>
 					</label>
 					<input
@@ -189,6 +121,74 @@ export default function StyleControls({ styles, onStyleChange }: StyleControlsPr
 						step={0.1}
 						value={styles.headingTopMargin}
 						onChange={(e) => onStyleChange("headingTopMargin", Number(e.target.value))}
+					/>
+				</div>
+			</div>
+
+			{/* Typography Section */}
+			<div className="control-section">
+				<div className="control-section-title">Typography</div>
+
+				<div className="control-group">
+					<label className="control-label">Font Family</label>
+					<select
+						className="control-input control-select"
+						value={styles.fontFamily}
+						onChange={(e) => onStyleChange("fontFamily", e.target.value)}
+					>
+						{fontFamilyOptions.map((opt) => (
+							<option key={opt.label} value={opt.value}>
+								{opt.label}
+							</option>
+						))}
+					</select>
+				</div>
+
+				<div className="control-group">
+					<label className="control-label">
+						Font Size
+						<span className="range-value">{styles.fontSize}px</span>
+					</label>
+					<input
+						type="range"
+						className="control-input control-range"
+						min={12}
+						max={24}
+						step={1}
+						value={styles.fontSize}
+						onChange={(e) => onStyleChange("fontSize", Number(e.target.value))}
+					/>
+				</div>
+
+				<div className="control-group">
+					<label className="control-label">
+						Body Weight
+						<span className="range-value">{styles.bodyWeight}</span>
+					</label>
+					<input
+						type="range"
+						className="control-input control-range"
+						min={100}
+						max={900}
+						step={20}
+						value={styles.bodyWeight}
+						onChange={(e) => onStyleChange("bodyWeight", Number(e.target.value))}
+					/>
+				</div>
+
+				<div className="control-group">
+					<label className="control-label">
+						Heading Weight
+						<span className="range-value">{styles.headingWeight}</span>
+					</label>
+					<input
+						type="range"
+						className="control-input control-range"
+						min={100}
+						max={900}
+						step={20}
+						value={styles.headingWeight}
+						onChange={(e) => onStyleChange("headingWeight", Number(e.target.value))}
 					/>
 				</div>
 			</div>
